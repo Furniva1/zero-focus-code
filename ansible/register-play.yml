@@ -1,0 +1,60 @@
+# ansible-playbook register-play.yml
+# check ansible active -> ansible –m ping <hosts>
+# remove unwanted files/dir from /tmp dir
+# no tabs only spaces! Formatting is everything http://www.yamllint.com/
+--- 
+- 
+  hosts: localhost
+  name: Playbook1
+  tasks: 
+    - 
+      command: 
+        warn: no
+        argv:
+        - mkdir
+        - /tmp/{{ item }}
+      with_items: 
+        - new_dir1
+        - new_dir2
+        - new_dir3
+    - 
+      command: 
+        warn: no
+        argv:
+        - touch
+        - /tmp/register.txt
+
+- 
+  hosts: localhost
+  vars:
+    actors:
+      - Jerry
+      - George
+      - Elaine
+      - Newman
+
+  tasks:
+  - name: Ansible List variables
+    debug:
+      msg: The cast of Seinfeld includes"{{ actors }}"
+
+  - name: Insert text into register.txt
+    blockinfile:
+      dest: /tmp/register.txt
+      block: |
+        This is the text to insert into register.txt
+  - name: Insert a line at the end of a file.
+    lineinfile:
+       path: /tmp/register.txt
+       line: This text should be last
+
+- 
+  hosts: localhost
+  name: Playbook3
+  vars_prompt:
+    name: var1
+    prompt: "Enter any value?"
+  tasks:
+    - name: Print a variable value 
+      debug: 
+        msg: "The value of your variable is {{ var1 }}"
